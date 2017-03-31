@@ -24,6 +24,7 @@ Table of contents
 - [Intro](#intro)
 - [Getting Started](#getting-started)
 - [Examples](#examples)
+- [Logging](#logging)
 - [Dependencies](#dependencies)
 - [Build](#build)
 - [Test](#test)
@@ -114,6 +115,21 @@ This is it... no boilerplate required we just added the line to require the plug
 take a look at the [helloworld example](https://github.com/ericholiveira/studio-cluster/tree/master/examples/helloworld) for more instructions, and 
 check the other more complex examples available, but always keep in mind that it really doesnt matter what you plan to do, studio-cluster
 is service communication with no boilerplate
+
+Logging
+=======
+
+Logs can be enabled via environment variable:
+
+```bash
+DEBUG="Studio-Cluster" node my-studio-app.js
+```
+or
+```bash
+export DEBUG="Studio-Cluster"
+node my-studio-app.js
+```
+
 
 Examples
 ========

@@ -1,6 +1,7 @@
 var ipc = require('multicast-ipc');
 var util = require('util');
 var EventEmitter = require("events").EventEmitter;
+var logging = require('./../../logging');
 
 /**
  * This publisher uses multicast to discover services running on the local network.  In most situations, this is limited
@@ -98,6 +99,7 @@ MulticastEmitter.prototype.send = function(action, info) {
 
 module.exports = function (rpcPort, opt) {
     'use strict';
+	logging.instance.log('Publisher method: IPC');
 
     return function (instanceId, Studio){
         var multicastPort = opt && opt.multicastPort || 10121;

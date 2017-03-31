@@ -1,3 +1,5 @@
+var logging = require('./../../logging');
+
 /**
  * Distribute traffic randomly between all services answering to the same route.
  *
@@ -57,6 +59,7 @@ Random.prototype.send = function(send, rec, localServices, remoteServices, paylo
 
 module.exports = function(options) {
     'use strict';
+	logging.instance.log('Balancer: random');
     
     return function(transport, Studio) {
         options.transport = transport;

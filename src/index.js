@@ -1,3 +1,4 @@
+var logging = require('./logging');
 var localServices = require('./localServices');
 var remoteServices = require('./remoteServices');
 var constants = require('./constants');
@@ -86,6 +87,7 @@ var clusterPlugin = function(configuration){
                     }
 
                     msg.id.forEach(function (_id) {
+                        logging.instance.log('Registering remote service ' + _id);
                         remoteServices[_id] = remoteServices[_id] || [];
 
                         remoteServices[_id] = remoteServices[_id].filter(function (info) {
@@ -104,11 +106,11 @@ var clusterPlugin = function(configuration){
 
                 function removeServiceFromRegistry(msg) {
                     var key;
-
+                    
                     if (!(msg.id instanceof Array)) {
                         msg.id = [msg.id];
                     }
-                    
+                    logging.instance.log('Removing remote service ' + msg.id);
                     key = getServiceRegistryKey(msg.url, msg.port, msg._publisherId);
 
                     msg.id.forEach(function (_id) {
@@ -126,13 +128,14 @@ var clusterPlugin = function(configuration){
 
                 function replyToDiscoveryRequest() {
                     var ids = Object.keys(localServices).filter(function (id) {return localServices[id];});
-
+                    logging.instance.log('Sending discovery reply with: \n\t* '+ids.join('\n\t* '));
                     publisherStartPromise.then(function () {
                         publisher.send(START_SERVICE_MESSAGE, ids);
                     });
                 }
 
                 function updateServiceRegistry(msg) {
+                    logging.instance.log('Updating service registry: '+msg.id);
                     serviceRegistry[getServiceRegistryKey(msg.address, msg.port, msg._publisherId)] = msg.id;
                     
                     Object.keys(remoteServices).forEach(function (_id) {
@@ -142,6 +145,7 @@ var clusterPlugin = function(configuration){
                     });
 
                     msg.id.forEach(function (_id) {
+                        logging.instance.log('Updating remote service information: '+_id);
                         remoteServices[_id].push({url: msg.address, port: msg.port, id: msg._publisherId});
                     });
                 }
@@ -152,12 +156,14 @@ var clusterPlugin = function(configuration){
                     setInterval(function(){
                         var ids = Object.keys(localServices).filter(function(id) { return localServices[id]; });
 
+                        logging.instance.log('Sending sync message');
                         publisher.send(SYNC_SERVICE_MESSAGE, ids);
                     }, syncInterval);
                 });    
             }
             
             serviceListener.onStart(function(serv){
+                logging.instance.log('Starting service listener');
                 localServices[serv.id] = true;
 
                 publisherStartPromise.then(function(publisher){
@@ -166,6 +172,7 @@ var clusterPlugin = function(configuration){
             });
 
             serviceListener.onStop(function(serv){
+                logging.instance.log('Stopping service listener');
                 localServices[serv.id] = false;
                 
                 publisherStartPromise.then(function(publisher){
@@ -174,10 +181,12 @@ var clusterPlugin = function(configuration){
             });
 
             transport.on('end',function(obj){
+                logging.instance.log('Destroying message transport');
                 removeServices(obj.url, obj.port, obj.id);
             });
 
             transport.on('close',function(obj){
+                logging.instance.log('Closing message transport');
                 var key = getServiceRegistryKey(obj.url, obj.port, obj.id);
                 var tmp = serviceRegistry[key];
                 removeServices(obj.url, obj.port, obj.id);
@@ -185,6 +194,7 @@ var clusterPlugin = function(configuration){
             });
 
             transport.on('reconnected',function(obj){
+                logging.instance.log('Reconnecting message transport');
                 (serviceRegistry[getServiceRegistryKey(obj.url, obj.port, obj.id)] || []).forEach(function(_id){
                     remoteServices[_id] = remoteServices[_id] || [];
 
@@ -197,6 +207,7 @@ var clusterPlugin = function(configuration){
             });
 
             serviceListener.interceptSend(function(send, rec){
+                logging.instance.log('Intercepting message: ' + rec);
                 return function() {
                     return balance.send(send, rec, localServices, remoteServices, Array.prototype.slice.call(arguments));
                 };

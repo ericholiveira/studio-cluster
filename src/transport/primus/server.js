@@ -3,6 +3,7 @@ var serializeError = require('serialize-error');
 var util = require('util');
 var EventEmitter = require("events").EventEmitter;
 var uuid = require('node-uuid');
+var logging = require('./../../logging');
 
 var generateId = function(){
     'use strict';
@@ -12,7 +13,7 @@ var generateId = function(){
 
 function PrimusTransport(instanceId,port,serverOpt,clientOpt,Studio){
     'use strict';
-
+	logging.instance.log('Transport method: Primus');
 	var refs = {};
 	serverOpt = serverOpt || {};
 	serverOpt.port = port;

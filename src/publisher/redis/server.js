@@ -3,6 +3,7 @@ var publicIp = require('public-ip');
 var Redis = require('ioredis');
 var util = require('util');
 var uuid = require('node-uuid');
+var logging = require('./../../logging');
 
 
 var redisSender,redisSubscriber,started = null;
@@ -38,6 +39,7 @@ StudioRedisEmitter.prototype.send = function(action,info){
 
 module.exports = function (rpcPort, opt, pluginOpt) {
     'use strict';
+	logging.instance.log('Publisher method: redis');
 
     return function(instanceId, Studio){
         var getIp;

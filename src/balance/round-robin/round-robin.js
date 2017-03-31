@@ -1,3 +1,5 @@
+var logging = require('./../../logging');
+
 /**
  * Distribute traffic sequentially between all services answering to the same route.
  *
@@ -70,6 +72,7 @@ RoundRobin.prototype.send = function(send, rec, localServices, remoteServices, p
 
 module.exports = function(options) {
     'use strict';
+	logging.instance.log('Balancer: round robin');
 
     return function(transport, Studio) {
         options.transport = transport;

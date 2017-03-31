@@ -1,4 +1,5 @@
 var Random = require('./../random');
+var logging = require('./../../logging');
 
 /**
  * For any route in the `routes` array, send the same payload to all services. For all other routes,
@@ -66,6 +67,7 @@ Multiplex.prototype.send = function(send, rec, localServices, remoteServices, pa
 
 module.exports = function(options) {
     'use strict';
+	logging.instance.log('Balancer: multiplex');
 
     return function(transport, Studio) {
         options.transport = transport;

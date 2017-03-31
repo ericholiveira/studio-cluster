@@ -1,6 +1,8 @@
+var logging = require('../../logging.js');
 var dgram = require('dgram');
 var util = require('util');
 var EventEmitter = require("events").EventEmitter;
+var logging = require('./../../logging');
 
 var BROADCAST_IP = "255.255.255.255";
 
@@ -29,6 +31,7 @@ BroadcastEmitter.prototype.send = function(action,info){
 };
 
 module.exports = function (rpcPort, opt) {
+	logging.instance.log('Publisher method: RPC');
     return function(instanceId, Studio){
         var client = dgram.createSocket({type:'udp4',reuseAddr:true});
         var broadcastPort = opt && opt.broadcastPort || 10121;

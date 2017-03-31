@@ -53,6 +53,7 @@
     "mocha": "^2.4.5"
   },
   "dependencies": {
+    "debug": "^2.6.3",
     "ioredis": "^1.15.1",
     "multicast-ipc": "^1.0.5",
     "node-uuid": "^1.4.7",
